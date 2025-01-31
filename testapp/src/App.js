@@ -83,6 +83,7 @@ import Section9 from "./components/Section9";
 import Section10 from "./components/Section10";
 import Login from "./components/Login"; // Import Login component
 import Register from "./components/Register"; // Import Register component
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

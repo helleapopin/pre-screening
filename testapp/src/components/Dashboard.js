@@ -122,7 +122,7 @@ const styles = {
   },
   newProcessButton: {
     padding: "10px 15px",
-    backgroundColor: "#28a745",
+    backgroundColor: "#0b6623",
     color: "white",
     border: "none",
     borderRadius: "5px",

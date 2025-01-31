@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function Login() {
-  const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/login';
+function Login({ onLogin }) {
+    const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/login';
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Clear error message
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.email || !formData.password) {
-      setError('Email and password are required.');
-      return;
-    }
     try {
-      const res = await axios.post(apiUrl, formData);
-      localStorage.setItem('token', res.data.token); // Store token in localStorage
-      navigate('/dashboard'); // Redirect to Dashboard
+      const res = await axios.post(
+        apiUrl,
+        formData
+      );
+      console.log("Login response:", res.data); // Debugging log
+      localStorage.setItem("token", res.data.token); // Store token
+      onLogin(res.data.token); // Notify App.js of login
+      console.log("Redirecting to dashboard..."); // Debugging log
+      navigate("/"); // Redirect to dashboard
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      console.error("Login error:", err.response?.data || err.message); // Debugging log
+      setError(err.response?.data?.error || "Login failed");
     }
   };
 
