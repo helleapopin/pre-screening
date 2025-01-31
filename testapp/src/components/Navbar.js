@@ -122,11 +122,11 @@ function Navbar({ isAuthenticated, onLogout }) {
           <button
             onClick={handleLogout}
             style={{
-              backgroundColor: "#ff4d4d",
-              color: "white",
+              backgroundColor: "#fcfe5d",
+              color: "black",
               border: "none",
               padding: "8px 16px",
-              borderRadius: "4px",
+              borderRadius: "20px",
               cursor: "pointer",
               fontSize: "1rem",
             }}

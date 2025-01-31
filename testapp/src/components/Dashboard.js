@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Auth.css";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -14,30 +15,30 @@ function Dashboard() {
   };
 
   return (
-    <div style={styles.dashboardContainer}>
-      {/* Header Section with Title & Button */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>Project Processes</h2>
-        <button style={styles.newProcessButton} onClick={handleStartNewProcess}>
+    <div className="dashboard-container">
+      {/* Header Section */}
+      <div className="dashboard-header">
+        <h2 className="dashboard-title">Project Processes</h2>
+        <button className="new-process-button" onClick={handleStartNewProcess}>
           Start New Process
         </button>
       </div>
 
       {/* Search Bar */}
-      <div style={styles.searchContainer}>
+      <div className="search-container">
         <input
           type="text"
           placeholder="Search by subject..."
           value={searchTerm}
           onChange={handleSearchChange}
-          style={styles.searchInput}
+          className="search-input"
         />
-        <button style={styles.searchButton}>Search</button>
+        <button className="search-button">Search</button>
       </div>
 
       {/* Table Section */}
-      <div style={styles.tableContainer}>
-        <table style={styles.table}>
+      <div className="table-container">
+        <table className="dashboard-table">
           <thead>
             <tr>
               <th>Instance</th>
@@ -72,62 +73,5 @@ function Dashboard() {
     </div>
   );
 }
-
-const styles = {
-  dashboardContainer: {
-    backgroundColor: "#f0f0f0", // Light gray background
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-    maxWidth: "95%",
-    margin: "auto",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between", // Aligns title on left, button on right
-    alignItems: "center",
-    marginBottom: "15px",
-  },
-  title: {
-    margin: 0,
-  },
-  searchContainer: {
-    display: "flex",
-    gap: "10px",
-    marginBottom: "15px",
-  },
-  searchInput: {
-    padding: "8px",
-    flexGrow: 1,
-    border: "1px solid #ccc",
-    borderRadius: "5px",
-  },
-  searchButton: {
-    padding: "8px 12px",
-    backgroundColor: "#007bff",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  tableContainer: {
-    overflowX: "auto",
-    backgroundColor: "#fff",
-    padding: "10px",
-    borderRadius: "8px",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  newProcessButton: {
-    padding: "10px 15px",
-    backgroundColor: "#0b6623",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-};
 
 export default Dashboard;
