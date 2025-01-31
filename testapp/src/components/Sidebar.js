@@ -18,7 +18,16 @@ const Sidebar = ({ steps, currentStep }) => {
               ...(isActive ? styles.activeStep : {}),
               borderBottom: index !== steps.length - 1 ? "1px solid #ccc" : "none", // Line between sections
             }}
-            onClick={() => navigate(step.path)}
+            // onClick={() => navigate(step.path)}
+            onClick={() => {
+              console.log("Clicked:", stepNumber, step.title, "Path:", step.path);
+              if (step.path) {
+                navigate(step.path);
+              } else {
+                console.error("Error: step.path is undefined for", stepNumber, step.title);
+              }
+            }}
+            
           >
             <span style={styles.stepNumber}>Section {stepNumber}</span>
             <span style={styles.stepTitle}>{step.title}</span>
