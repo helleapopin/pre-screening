@@ -139,11 +139,12 @@ body {
 
 
 .btn {
-  width: 100%;
+  justify-content: center;
+  width: auto;
   padding: 12px;
   /* Slightly larger button */
-  background-color: #fcfe5d;
-  color: black;
+  background-color: #15442d;
+  color: #f7fef1;
   border: none;
   border-radius: 15px;
   cursor: pointer;
@@ -157,7 +158,8 @@ body {
 }
 
 .btn:hover {
-  background-color: #3b8b3f;
+  background-color: #fcfe5d;
+  color: #15442d;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -286,7 +288,8 @@ body {
 .search-button {
   padding: 8px 12px;
   background-color: #fcfe5d;
-  color: black;
+  color: #30480d;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -307,3 +310,60 @@ body {
   width: 100%;
   border-collapse: collapse;
 }
+
+/* side bar */
+/* Sidebar.css */
+
+.sidebar {
+  width: 200px;
+  min-height: 100vh;
+  background: radial-gradient(circle at center, #113e27, #1b4e31, #113e27);
+  padding: 10px;
+}
+
+.step {
+  padding: 14px 10px;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.step:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease-in-out;
+  border-radius: 20px;
+}
+
+/* Remove the bottom border for the last step */
+.step:last-child {
+  border-bottom: none;
+}
+
+/* Active step styling */
+.activeStep {
+  background-color: #31482a;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  border-left: 6px solid #d66123;
+  /* Orange indicator */
+}
+
+/* Step number styling */
+.stepNumber {
+  font-size: 13px;
+  font: "Fira Sans", sans-serif;
+  font-style: italic;
+  color: white;
+}
+
+/* Step title styling */
+.stepTitle {
+  font-size: 16px;
+  font-weight: bold;
+  font: "Fira Sans", sans-serif;
+  color: white;
+}
+

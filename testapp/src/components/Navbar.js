@@ -123,11 +123,13 @@ function Navbar({ isAuthenticated, onLogout }) {
             onClick={handleLogout}
             style={{
               backgroundColor: "#fcfe5d",
-              color: "black",
+              color: " #30480d",
               border: "none",
+              font: '"Fira Sans", sans-serif',
               padding: "8px 16px",
               borderRadius: "20px",
               cursor: "pointer",
+              fontWeight: "600", // Slightly bold text
               fontSize: "1rem",
             }}
           >
@@ -144,6 +146,7 @@ function Navbar({ isAuthenticated, onLogout }) {
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
+                font: '"Fira Sans", sans-serif',
                 fontWeight: "600", // Slightly bold text
                 transition: "background-color 0.3s ease", // Smooth hover effect
               }}
@@ -159,6 +162,7 @@ function Navbar({ isAuthenticated, onLogout }) {
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
+                font: '"Fira Sans", sans-serif',
                 fontWeight: "600", // Slightly bold text
                 transition: "background-color 0.3s ease", // Smooth hover effect
               }}

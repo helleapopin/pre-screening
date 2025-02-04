@@ -607,7 +607,7 @@ const styles = {
     minWidth: '220px',
   },
   buttonContainer: {
-    display: 'flex',
+    display: "",
     justifyContent: 'center',  // Centers buttons
     gap: '10px', // Adds spacing between buttons
     marginTop: '1rem',
