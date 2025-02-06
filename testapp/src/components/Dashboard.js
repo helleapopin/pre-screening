@@ -26,6 +26,7 @@ function Dashboard() {
       {/* Search Bar */}
       <div className="search-container">
         <input
+          id="searchbox"
           type="text"
           placeholder="Search by subject..."
           value={searchTerm}

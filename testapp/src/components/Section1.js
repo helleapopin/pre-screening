@@ -583,9 +583,16 @@ function Section1() {
 const styles = {
   sectionContainer: {
     padding: '1rem',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+    background: 'rgba(255, 255, 255, 0.1)', // Transparent glass effect
+    backdropFilter: 'blur(15px)', // Frosted-glass blur
+    WebkitBackdropFilter: 'blur(15px)', // Safari support
+    borderRadius: '20px',
+    border: '2px solid rgba(255, 255, 255, 0.2)', // Subtle border
+    boxShadow: '0 0 20px rgba(0, 0, 0, 0.2)', // Soft shadow
+    color: 'white', // Ensure text is readable on the glass background
+    maxWidth: '95%',
+    margin: '40px auto 0',
+    overflow: 'hidden',
   },
   backButton: {
     marginBottom: '1rem',

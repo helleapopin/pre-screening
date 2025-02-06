@@ -41,10 +41,22 @@
 /* Global Section Styles */
 .section-container {
   padding: 1rem;
-  font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  /* Glass effect */
+  backdrop-filter: blur(15px);
+  /* Frosted-glass blur */
+  -webkit-backdrop-filter: blur(15px);
+  /* Safari support */
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  /* Subtle border */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  /* Soft shadow */
+  color: white;
+  /* Ensure text is readable */
+  max-width: 95%;
+  margin: 40px auto 0;
+  overflow: hidden;
 }
 
 /* Back Button */
@@ -86,8 +98,9 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: radial-gradient(circle at center, #113e27, #1b4e31, #113e27);
+  /* background: radial-gradient(circle at center, #113e27, #1b4e31, #113e27); */
   height: 100vh;
+  background: linear-gradient(120deg, #1D976C, #2c3e50);
 }
 
 .navbar a {
@@ -114,19 +127,30 @@ body {
 }
 
 .card {
-  padding: 2.5rem;
-  /* Increase padding for a bigger card */
-  border-radius: 12px;
-  /* background: radial-gradient(circle at center, #275e3f, #1b4e31, #113e27); */
-
-  background: radial-gradient(circle at bottom, #1b4e31, #255c3c, #15442d);
   width: 400px;
-  /* Increase width for a bigger card */
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(35px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.25);
+  padding: 30px 30px 30px 30px;
+  overflow: hidden;
+  text-align: center;
+
+}
+
+/* background: radial-gradient(circle at bottom, #1b4e31, #255c3c, #15442d); */
+
+/* .card {
+  padding: 2.5rem;
+  border-radius: 12px;
+  width: 400px;
+  background: linear-gradient(120deg, #1D976C, #2c3e50);
   text-align: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   display: block;
+} */
 
-}
 
 .title {
   font-size: 1.75rem;
@@ -240,12 +264,15 @@ body {
 
 /* Container for entire dashboard */
 .dashboard-container {
-  background-color: #f7fef1;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(35px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 80px rgba(0, 0, 0, 0.25);
   padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 95%;
+  overflow: hidden;
   margin: 40px auto 0;
+  max-width: 95%;
 }
 
 /* Header section */
@@ -274,15 +301,50 @@ body {
 /* Search container & elements */
 .search-container {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  justify-content: center;
+  align-items: center;
 }
+
+.underline {
+  transition: all 0.3s;
+  display: inline-block;
+  bottom: 0;
+  left: -100%;
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+}
+
+
 
 .search-input {
   padding: 8px;
   flex-grow: 1;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  background: transparent;
+  /* Make it transparent */
+  border: none;
+  /* Remove default border */
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  /* Subtle underline */
+  color: white;
+  /* White text */
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.search-input:hover {
+  border-bottom: 2px solid white;
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+.search-input:focus {
+  border-bottom: 2px solid #fcfe5d;
+  /* Yellow glow on focus */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .search-button {
@@ -366,4 +428,3 @@ body {
   font: "Fira Sans", sans-serif;
   color: white;
 }
-
