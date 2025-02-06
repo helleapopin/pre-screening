@@ -119,19 +119,8 @@ function Navbar({ isAuthenticated, onLogout }) {
       {/* Login/Logout and Sign Up Buttons */}
       <div style={{ marginLeft: "auto", display: "flex", gap: "10px" }}>
         {isAuthenticated ? (
-          <button
+          <button className="btn btn-secondary"
             onClick={handleLogout}
-            style={{
-              backgroundColor: "#fcfe5d",
-              color: " #30480d",
-              border: "none",
-              font: '"Fira Sans", sans-serif',
-              padding: "8px 16px",
-              borderRadius: "20px",
-              cursor: "pointer",
-              fontWeight: "600", // Slightly bold text
-              fontSize: "1rem",
-            }}
           >
             Logout
           </button>
@@ -140,15 +129,26 @@ function Navbar({ isAuthenticated, onLogout }) {
             <Link
               to="/login"
               style={{
-                backgroundColor: "#c8d8c5", // Bright yellow for Sign Up
-                color: "black", // Change text color to black for better contrast
-                padding: "8px 20px", // Slightly more padding
+                background: "rgba(255, 255, 255, 0.1)", // Glass effect
+                backdropFilter: "blur(10px)", // Frosted-glass blur
+                WebkitBackdropFilter: "blur(10px)", // Safari support
+                color: "white", // White text for better readability
+                padding: "10px 20px", // Comfortable padding
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
-                font: '"Fira Sans", sans-serif',
-                fontWeight: "600", // Slightly bold text
-                transition: "background-color 0.3s ease", // Smooth hover effect
+                fontFamily: '"Fira Sans", sans-serif',
+                fontWeight: "600",
+                border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
+                transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = "rgba(255, 255, 255, 0.2)";
+                e.target.style.boxShadow = "0 4px 10px rgba(255, 255, 255, 0.3)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow = "none";
               }}
             >
               Login
@@ -156,15 +156,26 @@ function Navbar({ isAuthenticated, onLogout }) {
             <Link
               to="/register"
               style={{
-                backgroundColor: "#fcfe5d", // Bright yellow for Sign Up
-                color: "black", // Change text color to black for better contrast
-                padding: "8px 20px", // Slightly more padding
+                background: "rgba(255, 255, 255, 0.1)", // Glass effect
+                backdropFilter: "blur(10px)", // Frosted-glass blur
+                WebkitBackdropFilter: "blur(10px)", // Safari support
+                color: "white", // White text for better readability
+                padding: "10px 20px", // Comfortable padding
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
-                font: '"Fira Sans", sans-serif',
-                fontWeight: "600", // Slightly bold text
-                transition: "background-color 0.3s ease", // Smooth hover effect
+                fontFamily: '"Fira Sans", sans-serif',
+                fontWeight: "600",
+                border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
+                transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = "rgba(255, 255, 255, 0.2)";
+                e.target.style.boxShadow = "0 4px 10px rgba(255, 255, 255, 0.3)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                e.target.style.boxShadow = "none";
               }}
             >
               Sign Up

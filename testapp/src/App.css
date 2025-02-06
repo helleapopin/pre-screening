@@ -163,29 +163,36 @@ body {
 
 
 .btn {
-  justify-content: center;
+  /* justify-content: center;
   width: auto;
   padding: 12px;
-  /* Slightly larger button */
   background-color: #15442d;
   color: #f7fef1;
   border: none;
   border-radius: 15px;
   cursor: pointer;
   font-size: 1rem;
-  /* Ensure text is readable */
   transition: background-color 0.3s ease;
-  /* Smooth hover effect */
   font-Weight: 600;
-  transition: "background-color 0.3s ease";
-
+  transition: "background-color 0.3s ease"; */
+  background: rgba(255, 255, 255, 0.1);
+  /* Light transparency */
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  font-family: 'Space Mono', monospace;
+  border-radius: 12px;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .btn:hover {
-  background-color: #fcfe5d;
-  color: #15442d;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  /* Slightly more visible */
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
 }
+
 
 .bottom-text {
   margin-top: 1.5rem;
@@ -284,19 +291,38 @@ body {
 }
 
 .dashboard-title {
-  color: #0f3f26;
+  color: white;
+  font-family: 'Space Mono', monospace;
   margin: 0;
 }
 
 /* "Start New Process" button */
 .new-process-button {
-  padding: 10px 15px;
-  background-color: #0b6623;
+  padding: 10px 20px;
+  background: rgba(0, 128, 0, 0.2);
+  /* Softer Green, more transparent */
+  backdrop-filter: blur(10px);
+  /* Frosted-glass effect */
+  -webkit-backdrop-filter: blur(10px);
+  /* Safari support */
   color: white;
-  border: none;
-  border-radius: 15px;
+  font-family: 'Space Mono', monospace;
+  font-weight: bold;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /* Softer border */
+  border-radius: 20px;
   cursor: pointer;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+
+/* Hover Effect */
+.new-process-button:hover {
+  background: rgba(0, 160, 0, 0.4);
+  /* Slightly stronger green */
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+}
+
 
 /* Search container & elements */
 .search-container {
@@ -323,6 +349,7 @@ body {
 .search-input {
   padding: 8px;
   flex-grow: 1;
+  font-family: 'Space Mono', monospace;
   background: transparent;
   /* Make it transparent */
   border: none;
@@ -348,17 +375,32 @@ body {
 }
 
 .search-button {
-  padding: 8px 12px;
-  background-color: #fcfe5d;
-  color: #30480d;
+  padding: 10px 15px;
+  font-family: 'Space Mono', monospace;
+  background: rgba(255, 255, 255, 0.15);
+  /* Transparent glass effect */
+  backdrop-filter: blur(10px);
+  /* Frosted blur */
+  -webkit-backdrop-filter: blur(10px);
+  /* Safari support */
+  color: white;
+  /* Make text more readable */
   font-weight: bold;
-  border: none;
-  border-radius: 10px;
+  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  /* Softer border */
+  border-radius: 20px;
   cursor: pointer;
-  /* Ensure text is readable */
-  transition: background-color 0.3s ease;
-
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
+
+/* Make the button more interactive */
+.search-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: black;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+}
+
 
 /* Table container & table styling */
 .table-container {
@@ -395,7 +437,13 @@ body {
 .step:hover {
   background-color: rgba(255, 255, 255, 0.1);
   transition: background-color 0.3s ease-in-out;
-  border-radius: 20px;
+  border-top-right-radius: 15px;
+  /* Rounded top-right */
+  border-bottom-right-radius: 15px;
+  /* Rounded bottom-right */
+  border-top-left-radius: 0;
+  /* Keep left corners sharp */
+  border-bottom-left-radius: 0;
 }
 
 /* Remove the bottom border for the last step */
@@ -403,14 +451,22 @@ body {
   border-bottom: none;
 }
 
-/* Active step styling */
 .activeStep {
-  background-color: #31482a;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  /* Softer highlight */
+  backdrop-filter: blur(10px);
+  /* Frosted glass effect */
+  -webkit-backdrop-filter: blur(10px);
   color: white;
   font-weight: bold;
-  border-left: 6px solid #d66123;
-  /* Orange indicator */
+  border-left: 4px solid #fcfe5d;
+  border-top-right-radius: 15px;
+  /* Rounded top-right */
+  border-bottom-right-radius: 15px;
+  /* Rounded bottom-right */
+  border-top-left-radius: 0;
+  /* Keep left corners sharp */
+  border-bottom-left-radius: 0;
 }
 
 /* Step number styling */
