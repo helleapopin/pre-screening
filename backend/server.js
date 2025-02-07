@@ -60,27 +60,86 @@ connection.query(
 );
 
 // 🔹 Create Section1 Table
+// 🔹 Create ProjectSubmissions Table (NEW)
 connection.query(
-    `CREATE TABLE IF NOT EXISTS Section1 (
+    `CREATE TABLE IF NOT EXISTS ProjectSubmissions (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+        -- Section 1 Fields
         priority VARCHAR(50) NOT NULL,
         dueDate DATE NOT NULL,
         roadName VARCHAR(255) NOT NULL,
         atKm DECIMAL(5,2),
-        latitude DECIMAL(9,6),
-        longitude DECIMAL(9,6),
+        latitude DECIMAL(11,6),
+        longitude DECIMAL(11,6),
         nearestTown VARCHAR(255),
         pids VARCHAR(255),
-        isDraft BOOLEAN DEFAULT TRUE,  -- Field to track drafts
+
+        -- Section 2 Fields
+        proximityToWaterbody VARCHAR(255),
+        largeBodyFishName VARCHAR(255),
+        smallBodyFishName VARCHAR(255),
+        fishPassageDesignRequired VARCHAR(50),
+        fishSpawningWindows VARCHAR(255),
+        commentsBodiesOfWater TEXT,
+        additionalComments TEXT,
+
+        -- Section 3 Fields
+        dfoReviewRequired VARCHAR(50),
+        dfoComments TEXT,
+
+        -- Section 4 Fields
+        ahppRequired VARCHAR(50),
+        ahppComments TEXT,
+        ahppAdditionalComments TEXT,
+
+        -- Section 5 Fields
+        rareEndangeredSpecies VARCHAR(50),
+        speciesComments TEXT,
+
+        -- Section 6 Fields
+        erosionSedimentControlComments TEXT,
+
+        -- Section 7 Fields
+        cofferdamsComments TEXT,
+
+        -- Section 8 Fields
+        inProvincialForest VARCHAR(50),
+        forestProductPermitRequired VARCHAR(50),
+        merchantableTimberPermitRequired VARCHAR(50),
+        forestPermitComments TEXT,
+
+        -- Section 9 Fields
+        impactedSitesComments TEXT,
+
+        -- Section 10 Fields
+        additionalPermitsComments TEXT,
+
+        isDraft BOOLEAN DEFAULT TRUE,  
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (id)
     )`,
     (error) => {
-        if (error) console.error("❌ Error creating Section1 table:", error);
+        if (error) console.error("❌ Error creating ProjectSubmissions table:", error);
+        else console.log("✅ ProjectSubmissions table is set up!");
     }
 );
 
+
 console.log("✅ Database and tables are set up!");
+
+app.get("/api/submissions", (req, res) => {
+    connection.query(
+        "SELECT id, priority, roadName, atKm, dueDate, pids, createdAt FROM ProjectSubmissions WHERE isDraft = FALSE ORDER BY createdAt DESC",
+        (err, results) => {
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).json({ error: "❌ Database error." });
+            }
+            res.json(results);
+        }
+    );
+});
 
 
 // 🔹 User Registration
@@ -93,8 +152,8 @@ app.post("/api/register", async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         connection.query(
-            "INSERT INTO users (email, password) VALUES (?, ?)", 
-            [email, hashedPassword], 
+            "INSERT INTO users (email, password) VALUES (?, ?)",
+            [email, hashedPassword],
             (err, result) => {
                 if (err) {
                     console.error("❌ Database error:", err);
@@ -112,37 +171,37 @@ app.post("/api/register", async (req, res) => {
 // 🔹 User Login
 app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
-  
+
     connection.query(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-      async (err, results) => {
-        if (err) {
-          console.error("❌ Database error:", err);
-          return res.status(500).json({ error: "❌ Database error." });
+        "SELECT * FROM users WHERE email = ?",
+        [email],
+        async (err, results) => {
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).json({ error: "❌ Database error." });
+            }
+            if (results.length === 0) {
+                return res.status(401).json({ error: "❌ User not found" });
+            }
+
+            const user = results[0];
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+
+            if (!isPasswordValid) {
+                return res.status(401).json({ error: "❌ Invalid credentials" });
+            }
+
+            // Generate JWT
+            const token = jwt.sign(
+                { userId: user.id, email: user.email },
+                process.env.JWT_SECRET, // Use environment variable
+                { expiresIn: "1h" }
+            );
+
+            res.json({ token, message: "✅ Login successful!" });
         }
-        if (results.length === 0) {
-          return res.status(401).json({ error: "❌ User not found" });
-        }
-  
-        const user = results[0];
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-  
-        if (!isPasswordValid) {
-          return res.status(401).json({ error: "❌ Invalid credentials" });
-        }
-  
-        // Generate JWT
-        const token = jwt.sign(
-          { userId: user.id, email: user.email },
-          process.env.JWT_SECRET, // Use environment variable
-          { expiresIn: "1h" }
-        );
-  
-        res.json({ token, message: "✅ Login successful!" });
-      }
     );
-  });
+});
 
 // 🔹 Middleware to Protect Routes
 const authenticateToken = (req, res, next) => {
@@ -160,22 +219,127 @@ const authenticateToken = (req, res, next) => {
 };
 
 // 🔹 Submit Section1 Data (Final Submission)
-app.post("/api/section1/submit", (req, res) => {
-    const { priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids } = req.body;
+// app.post("/api/section1/submit", (req, res) => {
+//     const { priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids } = req.body;
+
+//     if (!roadName || !priority || !dueDate) {
+//         return res.status(400).json({ error: "❌ Road Name, Priority, and Due Date are required." });
+//     }
+
+//     connection.query(
+//         "INSERT INTO Section1 (priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?, FALSE)",
+//         [priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids],
+//         (err, result) => {
+//             if (err) return res.status(500).json({ error: "❌ Database error." });
+//             res.status(200).json({ message: "✅ Data submitted successfully!" });
+//         }
+//     );
+// });
+
+app.post("/api/submit", (req, res) => {
+    const {
+        // Section 1 Fields
+        priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
+
+        // Section 2 Fields
+        proximityToWaterbody, largeBodyFishName, smallBodyFishName, fishPassageDesignRequired,
+        fishSpawningWindows, commentsBodiesOfWater, additionalComments,
+
+        // Section 3 Fields
+        dfoReviewRequired, dfoComments,
+
+        // Section 4 Fields
+        ahppRequired, ahppComments, ahppAdditionalComments,
+
+        // Section 5 Fields
+        rareEndangeredSpecies, speciesComments,
+
+        // Section 6 Fields
+        erosionSedimentControlComments,
+
+        // Section 7 Fields
+        cofferdamsComments,
+
+        // Section 8 Fields
+        inProvincialForest, forestProductPermitRequired, merchantableTimberPermitRequired, forestPermitComments,
+
+        // Section 9 Fields
+        impactedSitesComments,
+
+        // Section 10 Fields
+        additionalPermitsComments
+    } = req.body;
 
     if (!roadName || !priority || !dueDate) {
         return res.status(400).json({ error: "❌ Road Name, Priority, and Due Date are required." });
     }
 
     connection.query(
-        "INSERT INTO Section1 (priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?, FALSE)",
-        [priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids],
+        `INSERT INTO ProjectSubmissions 
+        (priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
+         proximityToWaterbody, largeBodyFishName, smallBodyFishName, fishPassageDesignRequired, 
+         fishSpawningWindows, commentsBodiesOfWater, additionalComments,
+         dfoReviewRequired, dfoComments,
+         ahppRequired, ahppComments, ahppAdditionalComments,
+         rareEndangeredSpecies, speciesComments,
+         erosionSedimentControlComments,
+         cofferdamsComments,
+         inProvincialForest, forestProductPermitRequired, merchantableTimberPermitRequired, forestPermitComments,
+         impactedSitesComments,
+         additionalPermitsComments,
+         isDraft) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?, ?, ?,
+                ?, ?, ?, ?, ?,
+                ?, ?,
+                ?,
+                ?,
+                ?, ?, ?, ?,
+                ?,
+                ?, FALSE)`, // FALSE means final submission
+        [
+            // Section 1
+            priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
+
+            // Section 2
+            proximityToWaterbody, largeBodyFishName, smallBodyFishName, fishPassageDesignRequired,
+            fishSpawningWindows, commentsBodiesOfWater, additionalComments,
+
+            // Section 3
+            dfoReviewRequired, dfoComments,
+
+            // Section 4
+            ahppRequired, ahppComments, ahppAdditionalComments,
+
+            // Section 5
+            rareEndangeredSpecies, speciesComments,
+
+            // Section 6
+            erosionSedimentControlComments,
+
+            // Section 7
+            cofferdamsComments,
+
+            // Section 8
+            inProvincialForest, forestProductPermitRequired, merchantableTimberPermitRequired, forestPermitComments,
+
+            // Section 9
+            impactedSitesComments,
+
+            // Section 10
+            additionalPermitsComments
+        ],
         (err, result) => {
-            if (err) return res.status(500).json({ error: "❌ Database error." });
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).json({ error: "❌ Database error." });
+            }
             res.status(200).json({ message: "✅ Data submitted successfully!" });
         }
     );
 });
+
+
 
 // 🔹 Save Draft (Allows users to save their progress without submitting)
 app.post("/api/section1/draft", (req, res) => {

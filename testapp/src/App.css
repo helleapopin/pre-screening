@@ -296,6 +296,70 @@ body {
   margin: 0;
 }
 
+.table-container {
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  /* Darker but still transparent */
+  backdrop-filter: blur(20px);
+  /* Stronger blur effect */
+  -webkit-backdrop-filter: blur(20px);
+  /* Safari support */
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  /* Softer border */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+  /* Subtle soft shadow */
+  padding: 20px;
+  overflow: hidden;
+  margin-top: 20px;
+  width: 100%;
+  font-family: "Space Mono", monospace;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+  font-family: "Space Mono", monospace;
+  background: rgba(255, 255, 255, 0.05);
+  /* Light transparency */
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+
+.dashboard-table thead {
+  background: rgba(255, 255, 255, 0.1);
+  /* Slight frost */
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.dashboard-table tbody tr {
+  background: rgba(255, 255, 255, 0.05);
+  /* Subtle transparency */
+  transition: background 0.3s ease-in-out;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  background: transparent;
+  /* Keeps everything smooth */
+}
+
+.dashboard-table tbody tr td {
+  background: transparent;
+}
+
+.dashboard-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.15);
+  /* Soft glow effect */
+}
+
 /* "Start New Process" button */
 .new-process-button {
   padding: 10px 20px;
@@ -402,13 +466,6 @@ body {
 }
 
 
-/* Table container & table styling */
-.table-container {
-  overflow-x: auto;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-}
 
 .dashboard-table {
   width: 100%;

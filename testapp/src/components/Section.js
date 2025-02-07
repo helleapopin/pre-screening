@@ -1,183 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-
-// function Section({ currentStep }) {
-//   const navigate = useNavigate();
-//   const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/submit'; // Unified API
-
-//   // Load saved draft when the page loads
-//   const [formData, setFormData] = useState(() => {
-//     const savedDraft = localStorage.getItem('sectionDraft');
-//     return savedDraft ? JSON.parse(savedDraft) : {
-//       // Section 1 Fields
-//       priority: 'Low',
-//       dueDate: '',
-//       roadName: '',
-//       atKm: '',
-//       latitude: '',
-//       longitude: '',
-//       nearestTown: '',
-//       pids: '',
-
-//       // Section 2 Fields
-//       proximityToWaterbody: '',
-//       largeBodyFishName: '',
-//       smallBodyFishName: '',
-//       fishPassageDesignRequired: '',
-//       fishSpawningWindows: '',
-//       commentsBodiesOfWater: '',
-//       additionalComments: '',
-//     };
-//   });
-
-//   // Save draft whenever user types
-//   useEffect(() => {
-//     localStorage.setItem('sectionDraft', JSON.stringify(formData));
-//   }, [formData]);
-
-//   // Handle input changes
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   // Handle form submission
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const response = await axios.post(apiUrl, formData);
-//       if (response.status === 200) {
-//         alert('Data submitted successfully!');
-//         localStorage.removeItem('sectionDraft'); // Clear draft after submission
-//         navigate('/'); // Redirect to dashboard
-//       } else {
-//         alert('Failed to submit data');
-//       }
-//     } catch (error) {
-//       console.error('Error submitting data:', error);
-//       alert('An error occurred while submitting the form');
-//     }
-//   };
-
-//   return (
-//     <div className="section-container">
-//       <button className="btn btn-secondary back-button" onClick={() => navigate('/')}>
-//         Back to Dashboard
-//       </button>
-
-//       <h2 className="section-title">
-//         {currentStep === 1 ? 'Section 1 - Project Location' : 'Section 2 - Fish Passage Design Requirements'}
-//       </h2>
-
-//       {/* Form */}
-//       <form onSubmit={handleSubmit}>
-//         {currentStep === 1 && (
-//           <>
-//             <div className="row">
-//               <div className="field">
-//                 <label>Priority:</label>
-//                 <select name="priority" value={formData.priority} onChange={handleChange} className="form-control">
-//                   <option value="Low">Low</option>
-//                   <option value="Medium">Medium</option>
-//                   <option value="High">High</option>
-//                 </select>
-//               </div>
-//               <div className="field">
-//                 <label>Due Date:</label>
-//                 <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} className="form-control" />
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="field">
-//                 <label>Road Name:</label>
-//                 <input type="text" name="roadName" value={formData.roadName} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>At Km:</label>
-//                 <input type="text" name="atKm" value={formData.atKm} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>Latitude:</label>
-//                 <input type="text" name="latitude" value={formData.latitude} onChange={handleChange} className="form-control" />
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="field">
-//                 <label>Longitude:</label>
-//                 <input type="text" name="longitude" value={formData.longitude} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>Nearest Town:</label>
-//                 <input type="text" name="nearestTown" value={formData.nearestTown} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>PIDs:</label>
-//                 <input type="text" name="pids" value={formData.pids} onChange={handleChange} className="form-control" />
-//               </div>
-//             </div>
-//           </>
-//         )}
-
-//         {currentStep === 2 && (
-//           <>
-//             <div className="row">
-//               <div className="field">
-//                 <label>Proximity to Fish-Bearing Waterbody:</label>
-//                 <input type="text" name="proximityToWaterbody" value={formData.proximityToWaterbody} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>Large Body Fish Name:</label>
-//                 <input type="text" name="largeBodyFishName" value={formData.largeBodyFishName} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>Small Body Fish Name:</label>
-//                 <input type="text" name="smallBodyFishName" value={formData.smallBodyFishName} onChange={handleChange} className="form-control" />
-//               </div>
-//             </div>
-
-//             <div className="row">
-//               <div className="field">
-//                 <label>Fish Passage Design Required?</label>
-//                 <select name="fishPassageDesignRequired" value={formData.fishPassageDesignRequired} onChange={handleChange} className="form-control">
-//                   <option value="">Select</option>
-//                   <option value="Yes">Yes</option>
-//                   <option value="No">No</option>
-//                 </select>
-//               </div>
-//               <div className="field">
-//                 <label>Fish Spawning Windows:</label>
-//                 <input type="text" name="fishSpawningWindows" value={formData.fishSpawningWindows} onChange={handleChange} className="form-control" />
-//               </div>
-//               <div className="field">
-//                 <label>Comments on Bodies of Water:</label>
-//                 <input type="text" name="commentsBodiesOfWater" value={formData.commentsBodiesOfWater} onChange={handleChange} className="form-control" />
-//               </div>
-//             </div>
-
-//             <div className="fullWidthField">
-//               <label>Additional Comments:</label>
-//               <textarea name="additionalComments" value={formData.additionalComments} onChange={handleChange} className="form-control" rows="3" />
-//             </div>
-//           </>
-//         )}
-
-//         {/* Navigation Buttons */}
-//         <div className="button-container">
-//           {currentStep > 1 && <button type="button" className="btn btn-info" onClick={() => navigate(`/section${currentStep - 1}`)}>Back</button>}
-//           {currentStep < 2 && <button type="button" className="btn btn-primary" onClick={() => navigate(`/section${currentStep + 1}`)}>Next</button>}
-//           <button type="submit" className="btn btn-success">Submit</button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default Section;
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -232,13 +52,13 @@ function Section({ currentStep }) {
       inProvincialForest: '',
       forestProductPermitRequired: '',
       merchantableTimberPermitRequired: '',
-      forestPermitComments: '',
+      forestPermitComments: "",
 
       // Section 9 Fields
-      impactedSitesComments: '',
+      impactedSitesComments: "",
 
       // Section 10 Fields
-      additionalPermitsComments: '',
+      additionalPermitsComments: "",
     };
   });
 
@@ -259,6 +79,7 @@ function Section({ currentStep }) {
     try {
       const response = await axios.post(apiUrl, formData);
       if (response.status === 200) {
+        console.log("Response from Server:", response.data);
         alert('Data submitted successfully!');
         localStorage.removeItem('sectionDraft'); // Clear draft after submission
         navigate('/'); // Redirect to dashboard
@@ -657,8 +478,8 @@ function Section({ currentStep }) {
               <div className="field">
                 <label>Comments on Forest Permits:</label>
                 <textarea
-                  name="comments"
-                  value={formData.comments}
+                  name="forestPermitComments"
+                  value={formData.forestPermitComments}
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Enter comments..."
@@ -675,8 +496,8 @@ function Section({ currentStep }) {
               <div className="field">
                 <label>Impacted Sites Comments:</label>
                 <textarea
-                  name="comments"
-                  value={formData.comments}
+                  name="impactedSitesComments"
+                  value={formData.impactedSitesComments}
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Enter comments..."
@@ -694,8 +515,8 @@ function Section({ currentStep }) {
               <div className="field">
                 <label>Additional Permits Comments:</label>
                 <textarea
-                  name="comments"
-                  value={formData.comments}
+                  name="additionalPermitsComments"
+                  value={formData.additionalPermitsComments}
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Enter comments..."

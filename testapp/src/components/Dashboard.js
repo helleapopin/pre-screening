@@ -1,9 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Dashboard() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [submissions, setSubmissions] = useState([]); // Holds database data
+  const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/submissions';
+
+  useEffect(() => {
+    // Fetch data from the backend when component loads
+    axios.get(apiUrl)
+      .then((response) => {
+        setSubmissions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching submissions:", error);
+      });
+  }, []);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -41,32 +55,35 @@ function Dashboard() {
         <table className="dashboard-table">
           <thead>
             <tr>
-              <th>Instance</th>
-              <th>State</th>
-              <th>Subject</th>
-              <th>Step</th>
-              <th>In Step Since</th>
-              <th>Status</th>
-              <th>Responsible Actors</th>
+              <th>ID</th>
+              <th>Priority</th>
+              <th>Road Name</th>
+              <th>At Km</th>
+              <th>Due Date</th>
+              <th>PIDs</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>LDS - 1</td>
-              <td>Open Priority</td>
-              <td>Environmental Specialist</td>
-              <td>Dec 7, 2023</td>
-              <td>Submitted</td>
-              <td>Farzad, Shiv, Trevor</td>
-            </tr>
-            <tr>
-              <td>LDS - 2</td>
-              <td>Open High Priority</td>
-              <td>Environmental Manager Review</td>
-              <td>Dec 7, 2023</td>
-              <td>Submitted</td>
-              <td>Trevor, Elaine</td>
-            </tr>
+            {submissions.length > 0 ? (
+              submissions.map((submission) => (
+                <tr key={submission.id}>
+                  <td>{submission.id}</td>
+                  <td>{submission.priority}</td>
+                  <td>{submission.roadName}</td>
+                  <td>{submission.atKm}</td>
+                  <td>{submission.dueDate}</td>
+                  <td>{submission.pids}</td>
+                  <td>{new Date(submission.createdAt).toLocaleString()}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" style={{ textAlign: "center" }}>
+                  No data available
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
