@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
+import Section from "./components/Section";
 import Section1 from "./components/Section1";
 import Section2 from "./components/Section2";
 import Section3 from "./components/Section3";
@@ -61,7 +62,24 @@ const App = () => {
             path="/"
             element={<ProtectedRoute element={<Dashboard />} />}
           />
-          <Route
+
+          {/* section path */}
+          <Route path="/create-report" element={<Layout currentStep={1} component={<Section currentStep={1} />} />} />
+          <Route path="/section2" element={<Layout currentStep={2} component={<Section currentStep={2} />} />} />
+          <Route path="/section3" element={<Layout currentStep={3} component={<Section currentStep={3} />} />} />
+          <Route path="/section4" element={<Layout currentStep={4} component={<Section currentStep={4} />} />} />
+          <Route path="/section5" element={<Layout currentStep={5} component={<Section currentStep={5} />} />} />
+          <Route path="/section6" element={<Layout currentStep={6} component={<Section currentStep={6} />} />} />
+          <Route path="/section7" element={<Layout currentStep={7} component={<Section currentStep={7} />} />} />
+          <Route path="/section8" element={<Layout currentStep={8} component={<Section currentStep={8} />} />} />
+          <Route path="/section9" element={<Layout currentStep={9} component={<Section currentStep={9} />} />} />
+          <Route path="/section10" element={<Layout currentStep={10} component={<Section currentStep={10} />} />} />
+
+
+
+
+
+          {/* <Route
             path="/create-report"
             element={
               <ProtectedRoute
@@ -140,7 +158,7 @@ const App = () => {
                 element={<Layout currentStep={10} component={<Section10 />} />}
               />
             }
-          />
+          /> */}
 
           {/* Redirect all other routes to the home page */}
           <Route path="*" element={<Navigate to="/" />} />
@@ -174,3 +192,5 @@ const Layout = ({ currentStep, component }) => {
 };
 
 export default App;
+
+

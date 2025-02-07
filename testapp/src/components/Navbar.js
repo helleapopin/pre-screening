@@ -108,7 +108,7 @@ function Navbar({ isAuthenticated, onLogout }) {
           margin: 0,
           fontSize: "1.6rem",
           fontWeight: "bold",
-          font: '"Fira Sans", sans-serif',
+          fontFamily: '"Space Mono", monospace',
           flexGrow: 1, // Ensures the text is centered
           textAlign: "center",
         }}
@@ -137,7 +137,7 @@ function Navbar({ isAuthenticated, onLogout }) {
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
-                fontFamily: '"Fira Sans", sans-serif',
+                fontFamily: '"Space Mono", monospace',
                 fontWeight: "600",
                 border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
                 transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
@@ -164,7 +164,7 @@ function Navbar({ isAuthenticated, onLogout }) {
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
-                fontFamily: '"Fira Sans", sans-serif',
+                fontFamily: '"Space Mono", monospace',
                 fontWeight: "600",
                 border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
                 transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",

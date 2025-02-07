@@ -484,3 +484,24 @@ body {
   font: "Fira Sans", sans-serif;
   color: white;
 }
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* 3 fields per row */
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1rem;
+}
