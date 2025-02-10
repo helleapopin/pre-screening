@@ -1,91 +1,28 @@
-// import React from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import logo from "/workspaces/test-app/testapp/src/assets/images/logo.png"; // Ensure correct path
-
-// function Navbar({ isAuthenticated, onLogout }) {
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     onLogout(); // Call logout handler from App.js
-//     navigate("/login"); // Redirect to login
-//   };
-
-//   return (
-//     <div
-//       style={{
-//         width: "100%",
-//         padding: "10px 20px",
-//         display: "flex",
-//         alignItems: "center",
-//       }}
-//     >
-//       <img
-//         src={logo}
-//         alt="Logo"
-//         style={{ width: "170px", height: "auto", marginRight: "15px" }}
-//       />
-//       <h1
-//         style={{
-//           color: "white",
-//           margin: 0,
-//           fontSize: "1.6rem",
-//           font: ' "Fira Sans", sans-serif',
-//           flexGrow: 1, // Ensures the text is centered
-//           textAlign: "center",
-//         }}
-//       >
-//         Pre-Screening App
-//       </h1>
-
-//       {/* Login/Logout Button */}
-//       <div style={{ marginLeft: "auto" }}>
-//         {isAuthenticated ? (
-//           <button
-//             onClick={handleLogout}
-//             style={{
-//               backgroundColor: "#ff4d4d",
-//               color: "white",
-//               border: "none",
-//               padding: "8px 16px",
-//               borderRadius: "4px",
-//               cursor: "pointer",
-//               fontSize: "1rem",
-//             }}
-//           >
-//             Logout
-//           </button>
-//         ) : (
-//           <Link
-//             to="/login"
-//             style={{
-//               backgroundColor: "#4CAF50",
-//               color: "white",
-//               padding: "8px 16px",
-//               borderRadius: "4px",
-//               textDecoration: "none",
-//               fontSize: "1rem",
-//             }}
-//           >
-//             Login
-//           </Link>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Navbar;
-
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "/workspaces/test-app/testapp/src/assets/images/logo.png"; // Ensure correct path
 
-function Navbar({ isAuthenticated, onLogout }) {
+function Navbar({ isAuthenticated, username, email, onLogout }) {
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null); // Reference for dropdown
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
-    onLogout(); // Call logout handler from App.js
-    navigate("/login"); // Redirect to login
+    onLogout();
+    navigate("/login");
+    setDropdownOpen(false);
   };
 
   return (
@@ -109,7 +46,7 @@ function Navbar({ isAuthenticated, onLogout }) {
           fontSize: "1.6rem",
           fontWeight: "bold",
           fontFamily: '"Space Mono", monospace',
-          flexGrow: 1, // Ensures the text is centered
+          flexGrow: 1,
           textAlign: "center",
         }}
       >
@@ -117,80 +54,42 @@ function Navbar({ isAuthenticated, onLogout }) {
       </h1>
 
       {/* Login/Logout and Sign Up Buttons */}
-      <div style={{ marginLeft: "auto", display: "flex", gap: "10px" }}>
+      <div style={{ marginLeft: "auto", display: "flex", gap: "10px", position: "relative" }}>
         {isAuthenticated ? (
-          <button className="btn btn-secondary"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <div className="user-menu" ref={dropdownRef} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {/* Username & Email */}
+            <div style={{ textAlign: "right", color: "white", fontSize: "0.9rem", fontFamily: '"Space Mono", monospace' }}>
+              <p style={{ margin: "0", fontWeight: "bold" }}>{username}</p>
+              <p style={{ margin: "0", opacity: "0.7", fontSize: "0.8rem" }}>{email}</p>
+            </div>
+
+            {/* User Icon & Dropdown */}
+            <button
+              className="btn user-btn"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              style={{ display: "flex", alignItems: "center", gap: "8px" }}
+            >
+              <span className="user-icon">👤</span> {/* Circle icon */}
+            </button>
+
+            {dropdownOpen && (
+              <div className="dropdown">
+                <p className="dropdown-username">{username}</p>
+                <p className="dropdown-email">{email}</p>
+                <hr className="dropdown-divider" />
+                <button className="dropdown-item" onClick={handleLogout}>
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <>
-            {/* <Link
-              to="/login"
-              style={{
-                background: "rgba(255, 255, 255, 0.1)", // Glass effect
-                backdropFilter: "blur(10px)", // Frosted-glass blur
-                WebkitBackdropFilter: "blur(10px)", // Safari support
-                color: "white", // White text for better readability
-                padding: "10px 20px", // Comfortable padding
-                borderRadius: "20px", // Curved edges
-                textDecoration: "none",
-                fontSize: "1rem",
-                fontFamily: '"Space Mono", monospace',
-                fontWeight: "600",
-                border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
-                transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = "rgba(255, 255, 255, 0.2)";
-                e.target.style.boxShadow = "0 4px 10px rgba(255, 255, 255, 0.3)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = "rgba(255, 255, 255, 0.1)";
-                e.target.style.boxShadow = "none";
-              }}
-            >
-              Login
-            </Link> */}
-            {/* <Link
-              to="/register"
-              style={{
-                background: "rgba(0, 200, 0, 0.3)", // Soft green for sign-up button
-                backdropFilter: "blur(10px)", // Frosted-glass blur
-                WebkitBackdropFilter: "blur(10px)", // Safari support
-                color: "white", // White text
-                padding: "10px 20px", // Comfortable padding
-                borderRadius: "20px", // Curved edges
-                textDecoration: "none",
-                fontSize: "1rem",
-                fontFamily: '"Space Mono", monospace',
-                fontWeight: "600",
-                transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = "rgba(0, 255, 0, 0.6)"; // Brighter green on hover
-                e.target.style.boxShadow = "0 4px 10px rgba(0, 255, 0, 0.5)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = "rgba(0, 200, 0, 0.3)"; // Restore original green
-                e.target.style.boxShadow = "none";
-              }}
-            >
-              Sign Up
-            </Link> */}
-
-            <Link
-              to="/login"
-              className="btn"
-            >
+            <Link to="/login" className="btn">
               Login
             </Link>
 
-            <Link
-              to="/register"
-              className="btn-permanent"
-            >
+            <Link to="/register" className="btn-permanent">
               Sign Up
             </Link>
           </>

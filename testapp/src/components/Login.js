@@ -77,6 +77,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 
 function Login({ onLogin }) {
   const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/login';
@@ -98,23 +100,41 @@ function Login({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // ✅ Show Loading Indicator
-
+    setLoading(true);
     try {
       const response = await axios.post(apiUrl, formData);
-      localStorage.setItem("token", response.data.token);
+      console.log("Login API Response:", response.data); // ✅ Debugging
 
-      // ✅ Ensure navigation happens AFTER token is set
-      setTimeout(() => {
-        setLoading(false);
-        onLogin(response.data.token);
-        navigate("/");
-      }, 500); // Small delay ensures the update is processed
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+
+        // ✅ Decode the token to extract user info
+        const decodedUser = jwtDecode(response.data.token);
+        console.log("Decoded User:", decodedUser); // ✅ Debugging
+
+        const user = {
+          username: decodedUser.username,
+          email: decodedUser.email,
+        };
+
+        // ✅ Store user info
+        localStorage.setItem("user", JSON.stringify(user));
+
+        setTimeout(() => {
+          setLoading(false);
+          onLogin(response.data.token, user);
+          navigate("/");
+        }, 500);
+      } else {
+        setError("❌ Invalid response from server.");
+      }
     } catch (err) {
+      console.error("Login Error:", err);
       setError("❌ Invalid credentials. Please try again.");
       setLoading(false);
     }
   };
+
 
   return (
     <div className="container">

@@ -22,6 +22,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("token"));
+  const [currentUser, setCurrentUser] = useState(null);
 
 
   // Check if the user is authenticated on app load
@@ -32,17 +33,54 @@ const App = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   const userData = localStorage.getItem("user");
+  //   console.log("Retrieved user from localStorage:", userData);
+
+
+  //   if (userData) {
+  //     try {
+  //       const parsedUser = JSON.parse(userData);
+  //       setCurrentUser(parsedUser);
+  //     } catch (error) {
+  //       console.error("Error parsing user JSON:", error);
+  //       setCurrentUser(null);
+  //     }
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setCurrentUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing user:", error);
+        localStorage.removeItem("user"); // ✅ Remove corrupted data
+      }
+    }
+  }, []);
+
+
   // Function to handle login
-  const handleLogin = (token) => {
+  const handleLogin = (token, user) => {
+    console.log("Storing user:", user); // Debugging log
+
     localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user)); // Store user details
     setIsAuthenticated(true);
+    setCurrentUser(user);
   };
+
 
   // Function to handle logout
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user"); // Remove user data
     setIsAuthenticated(false);
+    setCurrentUser(null);
   };
+
 
   // Protected Route Component
   const ProtectedRoute = ({ element }) => {
@@ -52,7 +90,12 @@ const App = () => {
   return (
     <Router>
       <div>
-        <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+        <Navbar
+          isAuthenticated={isAuthenticated}
+          username={currentUser?.username}
+          email={currentUser?.email}
+          onLogout={handleLogout}
+        />
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
