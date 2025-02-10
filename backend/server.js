@@ -51,6 +51,7 @@ connection.query(`USE prescreeningApp`, (error) => {
 connection.query(
     `CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL
     )`,
@@ -58,6 +59,7 @@ connection.query(
         if (error) console.error("❌ Error creating users table:", error);
     }
 );
+
 
 // 🔹 Create Section1 Table
 // 🔹 Create ProjectSubmissions Table (NEW)
@@ -142,18 +144,38 @@ app.get("/api/submissions", (req, res) => {
 });
 
 
+// GET a single submission by ID
+app.get("/api/submissions/:id", (req, res) => {
+    const { id } = req.params;
+
+    connection.query("SELECT * FROM ProjectSubmissions WHERE id = ?", [id], (err, results) => {
+        if (err) {
+            console.error("❌ Database error:", err);
+            return res.status(500).json({ error: "Database error." });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Submission not found." });
+        }
+        res.json(results[0]);
+    });
+});
+
+
+
+
 // 🔹 User Registration
+// 🔹 User Registration API
 app.post("/api/register", async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(400).json({ error: "❌ Email and password are required." });
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "❌ Username, email, and password are required." });
     }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         connection.query(
-            "INSERT INTO users (email, password) VALUES (?, ?)",
-            [email, hashedPassword],
+            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            [username, email, hashedPassword],
             (err, result) => {
                 if (err) {
                     console.error("❌ Database error:", err);
@@ -168,13 +190,15 @@ app.post("/api/register", async (req, res) => {
     }
 });
 
+
 // 🔹 User Login
+// 🔹 User Login API (Supports Email OR Username)
 app.post("/api/login", (req, res) => {
-    const { email, password } = req.body;
+    const { identifier, password } = req.body; // ✅ Changed from 'email' to 'identifier'
 
     connection.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
+        "SELECT * FROM users WHERE email = ? OR username = ?", // ✅ Check for both email & username
+        [identifier, identifier], // ✅ Pass 'identifier' for both
         async (err, results) => {
             if (err) {
                 console.error("❌ Database error:", err);
@@ -193,8 +217,8 @@ app.post("/api/login", (req, res) => {
 
             // Generate JWT
             const token = jwt.sign(
-                { userId: user.id, email: user.email },
-                process.env.JWT_SECRET, // Use environment variable
+                { userId: user.id, email: user.email, username: user.username }, // ✅ Include username
+                process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
 
@@ -202,6 +226,8 @@ app.post("/api/login", (req, res) => {
         }
     );
 });
+
+
 
 // 🔹 Middleware to Protect Routes
 const authenticateToken = (req, res, next) => {

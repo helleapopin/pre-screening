@@ -126,7 +126,7 @@ function Navbar({ isAuthenticated, onLogout }) {
           </button>
         ) : (
           <>
-            <Link
+            {/* <Link
               to="/login"
               style={{
                 background: "rgba(255, 255, 255, 0.1)", // Glass effect
@@ -152,31 +152,44 @@ function Navbar({ isAuthenticated, onLogout }) {
               }}
             >
               Login
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               to="/register"
               style={{
-                background: "rgba(255, 255, 255, 0.1)", // Glass effect
+                background: "rgba(0, 200, 0, 0.3)", // Soft green for sign-up button
                 backdropFilter: "blur(10px)", // Frosted-glass blur
                 WebkitBackdropFilter: "blur(10px)", // Safari support
-                color: "white", // White text for better readability
+                color: "white", // White text
                 padding: "10px 20px", // Comfortable padding
                 borderRadius: "20px", // Curved edges
                 textDecoration: "none",
                 fontSize: "1rem",
                 fontFamily: '"Space Mono", monospace',
                 fontWeight: "600",
-                border: "1px solid rgba(255, 255, 255, 0.2)", // Subtle border
                 transition: "background 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
               }}
               onMouseOver={(e) => {
-                e.target.style.background = "rgba(255, 255, 255, 0.2)";
-                e.target.style.boxShadow = "0 4px 10px rgba(255, 255, 255, 0.3)";
+                e.target.style.background = "rgba(0, 255, 0, 0.6)"; // Brighter green on hover
+                e.target.style.boxShadow = "0 4px 10px rgba(0, 255, 0, 0.5)";
               }}
               onMouseOut={(e) => {
-                e.target.style.background = "rgba(255, 255, 255, 0.1)";
+                e.target.style.background = "rgba(0, 200, 0, 0.3)"; // Restore original green
                 e.target.style.boxShadow = "none";
               }}
+            >
+              Sign Up
+            </Link> */}
+
+            <Link
+              to="/login"
+              className="btn"
+            >
+              Login
+            </Link>
+
+            <Link
+              to="/register"
+              className="btn-permanent"
             >
               Sign Up
             </Link>
