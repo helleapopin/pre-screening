@@ -202,7 +202,7 @@ const sendAdminApprovalEmail = (username, email, userId) => {
         secure: true, // Use SSL
         auth: {
             user: 'no-reply@mhisafety.ca',
-            pass: '_nst6!QNgGiT49!' // Use your actual password here
+            pass: '111'
         },
         tls: {
             rejectUnauthorized: false
