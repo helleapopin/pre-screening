@@ -15,6 +15,7 @@ import Section7 from "./components/Section7";
 import Section8 from "./components/Section8";
 import Section9 from "./components/Section9";
 import Section10 from "./components/Section10";
+import Review from "./components/Review";
 import Report from "./components/Report";
 import Login from "./components/Login"; // Import Login component
 import Register from "./components/Register"; // Import Register component
@@ -106,6 +107,7 @@ const App = () => {
             path="/"
             element={<ProtectedRoute element={<Dashboard />} />}
           />
+          <Route path="/review" element={<ProtectedRoute element={<Review />} />} />
           <Route path="/report/:id" element={<ProtectedRoute element={<Report />} />} />
 
           {/* section path */}

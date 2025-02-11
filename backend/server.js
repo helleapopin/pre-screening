@@ -53,7 +53,8 @@ connection.query(
         id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) UNIQUE NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL
+        password VARCHAR(255) NOT NULL,
+        status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending' -- Add status column
     )`,
     (error) => {
         if (error) console.error("❌ Error creating users table:", error);
@@ -165,6 +166,83 @@ app.get("/api/submissions/:id", (req, res) => {
 
 // 🔹 User Registration
 // 🔹 User Registration API
+// app.post("/api/register", async (req, res) => {
+//     const { username, email, password } = req.body;
+//     if (!username || !email || !password) {
+//         return res.status(400).json({ error: "❌ Username, email, and password are required." });
+//     }
+
+//     try {
+//         const hashedPassword = await bcrypt.hash(password, 10);
+//         connection.query(
+//             "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+//             [username, email, hashedPassword],
+//             (err, result) => {
+//                 if (err) {
+//                     console.error("❌ Database error:", err);
+//                     return res.status(500).json({ error: "❌ Database error." });
+//                 }
+//                 res.status(201).json({ message: "✅ User registered successfully!" });
+//             }
+//         );
+//     } catch (error) {
+//         console.error("❌ Error hashing password:", error);
+//         res.status(500).json({ error: "❌ Internal server error." });
+//     }
+// });
+
+
+
+const nodemailer = require("nodemailer");
+
+const sendAdminApprovalEmail = (username, email, userId) => {
+    const transporter = nodemailer.createTransport({
+        host: 'mail.mhisafety.ca',
+        port: 465,
+        secure: true, // Use SSL
+        auth: {
+            user: 'no-reply@mhisafety.ca',
+            pass: '_nst6!QNgGiT49!' // Use your actual password here
+        },
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+
+    // Admin email where approvals should be sent
+    const adminEmail = "austin.long@gov.sk.ca";
+
+    // Approval & Rejection Links
+    const approvalLink = `https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/admin/approve/${userId}`;
+    const rejectionLink = `https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/admin/reject/${userId}`;
+
+
+    const mailOptions = {
+        from: 'no-reply@mhisafety.ca',
+        to: adminEmail,
+        subject: 'New User Signup - Approval Needed',
+        html: `
+            <h3>New User Signup Request</h3>
+            <p><strong>Username:</strong> ${username}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p>Click below to approve or reject:</p>
+            <a href="${approvalLink}" style="color:green; font-weight:bold;">✅ Approve</a> |
+            <a href="${rejectionLink}" style="color:red; font-weight:bold;">❌ Reject</a>
+        `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("❌ Error sending admin approval email:", error);
+        } else {
+            console.log("✅ Admin approval email sent successfully!");
+            console.log("📩 Email Details:", info);
+        }
+    });
+
+};
+
+
 app.post("/api/register", async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -173,15 +251,23 @@ app.post("/api/register", async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Save user with status "pending"
         connection.query(
-            "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+            "INSERT INTO users (username, email, password, status) VALUES (?, ?, ?, 'pending')",
             [username, email, hashedPassword],
-            (err, result) => {
+            async (err, result) => {
                 if (err) {
                     console.error("❌ Database error:", err);
                     return res.status(500).json({ error: "❌ Database error." });
                 }
-                res.status(201).json({ message: "✅ User registered successfully!" });
+
+                const userId = result.insertId;
+
+                // ✅ Send email to admin for approval
+                sendAdminApprovalEmail(username, email, userId);
+
+                res.status(201).json({ message: "✅ Registration successful! Your account is pending admin approval." });
             }
         );
     } catch (error) {
@@ -191,10 +277,83 @@ app.post("/api/register", async (req, res) => {
 });
 
 
+app.get("/api/admin/approve/:userId", (req, res) => {
+    const { userId } = req.params;
+
+    connection.query(
+        "UPDATE users SET status = 'approved' WHERE id = ?",
+        [userId],
+        (err, result) => {
+            if (err) {
+                console.error("❌ Error approving user:", err);
+                return res.status(500).send("Error approving user.");
+            }
+            res.send("✅ User has been approved! They can now log in.");
+        }
+    );
+});
+
+app.get("/api/admin/reject/:userId", (req, res) => {
+    const { userId } = req.params;
+
+    connection.query(
+        "UPDATE users SET status = 'rejected' WHERE id = ?",
+        [userId],
+        (err, result) => {
+            if (err) {
+                console.error("❌ Error rejecting user:", err);
+                return res.status(500).send("Error rejecting user.");
+            }
+            res.send("❌ User has been rejected.");
+        }
+    );
+});
+
+
+
+
+
+
+
 // 🔹 User Login
 // 🔹 User Login API (Supports Email OR Username)
+// app.post("/api/login", (req, res) => {
+//     const { identifier, password } = req.body; // ✅ Changed from 'email' to 'identifier'
+
+//     connection.query(
+//         "SELECT * FROM users WHERE email = ? OR username = ?", // ✅ Check for both email & username
+//         [identifier, identifier], // ✅ Pass 'identifier' for both
+//         async (err, results) => {
+//             if (err) {
+//                 console.error("❌ Database error:", err);
+//                 return res.status(500).json({ error: "❌ Database error." });
+//             }
+//             if (results.length === 0) {
+//                 return res.status(401).json({ error: "❌ User not found" });
+//             }
+
+//             const user = results[0];
+//             const isPasswordValid = await bcrypt.compare(password, user.password);
+
+//             if (!isPasswordValid) {
+//                 return res.status(401).json({ error: "❌ Invalid credentials" });
+//             }
+
+//             // Generate JWT
+//             const token = jwt.sign(
+//                 { userId: user.id, email: user.email, username: user.username }, // ✅ Include username
+//                 process.env.JWT_SECRET,
+//                 { expiresIn: "1h" }
+//             );
+
+//             res.json({ token, message: "✅ Login successful!" });
+//         }
+//     );
+// });
+
+
 app.post("/api/login", (req, res) => {
-    const { identifier, password } = req.body; // ✅ Changed from 'email' to 'identifier'
+    const { identifier, password } = req.body; // ✅ Identifier (can be email or username)
 
     connection.query(
         "SELECT * FROM users WHERE email = ? OR username = ?", // ✅ Check for both email & username
@@ -209,13 +368,22 @@ app.post("/api/login", (req, res) => {
             }
 
             const user = results[0];
-            const isPasswordValid = await bcrypt.compare(password, user.password);
 
+            // ✅ Prevent login for pending users
+            if (user.status === "pending") {
+                return res.status(403).json({ error: "🚫 Your account is pending admin approval." });
+            }
+            // ✅ Prevent login for rejected users
+            if (user.status === "rejected") {
+                return res.status(403).json({ error: "🚫 Your account has been rejected by the admin." });
+            }
+
+            const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
                 return res.status(401).json({ error: "❌ Invalid credentials" });
             }
 
-            // Generate JWT
+            // ✅ Generate JWT (for authentication)
             const token = jwt.sign(
                 { userId: user.id, email: user.email, username: user.username }, // ✅ Include username
                 process.env.JWT_SECRET,
@@ -226,6 +394,8 @@ app.post("/api/login", (req, res) => {
         }
     );
 });
+
+
 
 
 

@@ -9,7 +9,9 @@ function Section({ currentStep }) {
   // Load saved draft when the page loads
   const [formData, setFormData] = useState(() => {
     const savedDraft = localStorage.getItem('sectionDraft');
-    return savedDraft ? JSON.parse(savedDraft) : {
+    return savedDraft ? {
+      ...JSON.parse(savedDraft), images: JSON.parse(savedDraft).images || []
+    } : {
       // Section 1 Fields
       priority: 'Low',
       dueDate: '',
@@ -19,6 +21,7 @@ function Section({ currentStep }) {
       longitude: '',
       nearestTown: '',
       pids: '',
+
 
       // Section 2 Fields
       proximityToWaterbody: '',
@@ -59,9 +62,11 @@ function Section({ currentStep }) {
 
       // Section 10 Fields
       additionalPermitsComments: "",
+      images: [],
     };
   });
 
+  const [imagePreviews, setImagePreviews] = useState([]);
   // Save draft whenever user types
   useEffect(() => {
     localStorage.setItem('sectionDraft', JSON.stringify(formData));
@@ -73,16 +78,99 @@ function Section({ currentStep }) {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission
+  // image upload
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+
+    // Convert images to Base64
+    const imagePromises = files.map((file) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result); // Convert to Base64
+        reader.onerror = (error) => reject(error);
+      });
+    });
+
+    try {
+      const base64Images = await Promise.all(imagePromises); // Convert all images
+
+      setFormData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          images: [...(prevData.images || []), ...base64Images], // Store new images
+        };
+        localStorage.setItem('sectionDraft', JSON.stringify(updatedData)); // Save to localStorage
+        return updatedData;
+      });
+    } catch (error) {
+      console.error("Error converting images:", error);
+    }
+  };
+
+  // Function to delete an image
+  const handleDeleteImage = (e, index) => {
+    e.preventDefault();  // Prevents the form from submitting
+    e.stopPropagation(); // Prevents the button click from triggering form events
+
+    setFormData((prevData) => {
+      const updatedImages = [...prevData.images];
+      updatedImages.splice(index, 1); // Remove the selected image
+
+      const updatedData = {
+        ...prevData,
+        images: updatedImages,
+      };
+
+      localStorage.setItem('sectionDraft', JSON.stringify(updatedData)); // Save changes
+      return updatedData;
+    });
+  };
+
+
+
+
+  // // Handle form submission
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await axios.post(apiUrl, formData);
+  //     if (response.status === 200) {
+  //       console.log("Response from Server:", response.data);
+  //       alert('Data submitted successfully!');
+  //       localStorage.removeItem('sectionDraft'); // Clear draft after submission
+  //       navigate('/'); // Redirect to dashboard
+  //     } else {
+  //       alert('Failed to submit data');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error submitting data:', error);
+  //     alert('An error occurred while submitting the form');
+  //   }
+  // };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formDataToSend = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === 'images') {
+        value.forEach((file) => formDataToSend.append('images', file));
+      } else {
+        formDataToSend.append(key, value);
+      }
+    });
+
     try {
-      const response = await axios.post(apiUrl, formData);
+      const response = await axios.post(apiUrl, formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       if (response.status === 200) {
-        console.log("Response from Server:", response.data);
         alert('Data submitted successfully!');
-        localStorage.removeItem('sectionDraft'); // Clear draft after submission
-        navigate('/'); // Redirect to dashboard
+        localStorage.removeItem('sectionDraft');
+        navigate('/');
       } else {
         alert('Failed to submit data');
       }
@@ -92,10 +180,18 @@ function Section({ currentStep }) {
     }
   };
 
+
+  const handleReview = (e) => {
+    e.preventDefault(); // Prevent form from submitting
+    localStorage.setItem('reviewData', JSON.stringify(formData));
+    navigate(`/review`); // Redirect to review page
+  };
+
+
   return (
     <div className="section-container">
       <button className="btn btn-secondary back-button" onClick={() => navigate('/')}>
-        Back to Dashboard
+        ← Back to Dashboard
       </button>
 
       <h2 className="section-title">
@@ -113,7 +209,7 @@ function Section({ currentStep }) {
         }
       </h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleReview}>
         {currentStep === 1 && (
           <>
             <div style={styles.row}>
@@ -523,6 +619,29 @@ function Section({ currentStep }) {
                 />
               </div>
             </div>
+
+
+            {/* Image Upload Section */}
+            <div className="row">
+              <div className="field">
+                <label>Upload Images:</label>
+                <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="form-control" />
+              </div>
+            </div>
+
+            {/* Display Image Previews */}
+            {formData.images && formData.images.length > 0 && (
+              <div className="image-preview-container">
+                {formData.images
+                  .filter(image => image.startsWith("data:image")) // Only keep valid images
+                  .map((image, index) => (
+                    <div key={index} className="image-preview-wrapper">
+                      <img src={image} alt={`Uploaded ${index}`} className="image-preview" />
+                      <button className="delete-button" onClick={(e) => handleDeleteImage(e, index)}>✖</button>
+                    </div>
+                  ))}
+              </div>
+            )}
           </>
         )}
 
@@ -530,7 +649,7 @@ function Section({ currentStep }) {
         <div className="button-container">
           {currentStep > 1 && <button type="button" className="btn btn-info" onClick={() => navigate(`/section${currentStep - 1}`)}>Back</button>}
           {currentStep < 10 && <button type="button" className="btn btn-primary" onClick={() => navigate(`/section${currentStep + 1}`)}>Next</button>}
-          <button type="submit" className="btn btn-success">Submit</button>
+          <button type="submit" className="btn btn-success">Review and Submit</button>
         </div>
       </form>
     </div>

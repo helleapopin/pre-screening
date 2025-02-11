@@ -100,7 +100,8 @@ body {
   font-family: Arial, sans-serif;
   /* background: radial-gradient(circle at center, #113e27, #1b4e31, #113e27); */
   min-height: 100vh;
-  background: linear-gradient(120deg, #1D976C, #2c3e50);
+  /* background: linear-gradient(120deg, #1D976C, #2c3e50); */
+  background: linear-gradient(120deg, #368860, #046A38);
 }
 
 .navbar a {
@@ -162,6 +163,72 @@ body {
   /* Increase margin for better spacing */
 }
 
+
+.nav_btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-family: 'Space Mono', monospace;
+  font-weight: 600;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease-in-out;
+  backdrop-filter: blur(10px);
+  color: white;
+  background: transparent;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+/* ✅ Glow Effect (Low Intensity by Default) */
+.nav_btn::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: linear-gradient(-20deg,
+      rgba(76, 175, 80, 0.7),
+      rgba(67, 160, 71, 0.5) 16.5%,
+      rgba(102, 187, 106, 0.4) 33%,
+      rgba(76, 175, 80, 0.2) 49.5%,
+      rgba(56, 142, 60, 0.6) 100%) 0 100% / 100% 200%;
+  filter: blur(6px);
+  opacity: 0.1;
+  /* ✅ Glow is always present, but faint */
+  animation: btn-glow 5s infinite linear;
+  /* ✅ Same animation as permanent button */
+}
+
+/* ✅ Hover Glow (Increase Intensity) */
+.nav_btn:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(76, 175, 80, 0.15);
+  box-shadow:
+    0 0 12px rgba(76, 175, 80, 0.6),
+    0 0 20px rgba(56, 142, 60, 0.8);
+}
+
+/* ✅ Hover: Brighten Glow */
+.nav_btn:hover::before {
+  opacity: 1;
+  /* 🔹 Full brightness on hover */
+}
+
+/* 🔹 Subtle Click Effect */
+.nav_btn:active {
+  transform: scale(0.96);
+}
+
+
 /* link button in navbar */
 @keyframes btn-glow {
   0% {
@@ -214,6 +281,7 @@ body {
       rgba(102, 187, 106, 0.4) 33%,
       rgba(76, 175, 80, 0.2) 49.5%,
       rgba(56, 142, 60, 0.6) 100%) 0 100% / 100% 200%;
+
   filter: blur(6px);
   opacity: 1;
   animation: btn-glow 5s infinite linear;
@@ -223,6 +291,9 @@ body {
 .btn-permanent:active {
   transform: scale(0.96);
 }
+
+
+
 
 .btn {
   position: relative;
@@ -294,7 +365,7 @@ body {
   font-size: 0.9rem;
   /* Slightly smaller text for the link */
   color: #c8d8c5;
-  font-family: "Space Mono", monospace;
+  font-family: system-ui, sans-serif;
 }
 
 .bottom-text a {
@@ -402,15 +473,15 @@ body {
 .table-container {
   border-radius: 20px;
   background: rgba(0, 0, 0, 0.2);
-  /* Darker but still transparent */
+
   backdrop-filter: blur(20px);
-  /* Stronger blur effect */
+
   -webkit-backdrop-filter: blur(20px);
-  /* Safari support */
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  /* Softer border */
+
+  /* border: 2px solid rgba(255, 255, 255, 0.15); */
+
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-  /* Subtle soft shadow */
+
   padding: 20px;
   overflow: hidden;
   margin-top: 20px;
@@ -479,7 +550,8 @@ body {
   border: 2px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
   color: white;
-  font-family: "Space Mono", monospace;
+  /* font-family: "Space Mono", monospace; */
+  font-family: system-ui, sans-serif;
 }
 
 .report-section {
@@ -607,6 +679,7 @@ body {
   border-bottom: 2px solid #fcfe5d;
   /* Yellow glow on focus */
   box-shadow: none;
+  color: white;
 }
 
 
@@ -734,20 +807,6 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* 
-.user-icon {
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  padding: 5px;
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
-} */
 
 .user-icon {
   width: 32px;
@@ -766,9 +825,12 @@ body {
 .user-icon::before {
   content: "👤";
   position: absolute;
-  left: 52%;   /* Move slightly right */
-  top: 50%;    /* Center vertically */
-  transform: translate(-50%, -50%);  /* Perfect centering */
+  left: 52%;
+  /* Move slightly right */
+  top: 50%;
+  /* Center vertically */
+  transform: translate(-50%, -50%);
+  /* Perfect centering */
   font-size: 20px;
   line-height: 1;
 }
@@ -842,4 +904,21 @@ body {
 .dropdown-item:hover {
   background: rgba(76, 175, 80, 0.3);
   border-radius: 8px;
+}
+
+
+
+.image-preview-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #ccc;
 }
