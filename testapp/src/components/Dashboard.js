@@ -28,7 +28,7 @@ function Dashboard() {
       <div className="dashboard-header">
         <h2 className="dashboard-title">Project Processes</h2>
         <button className="btn-permanent" onClick={() => navigate("/create-report")}>
-          Start New Process
+          Start SDS Process
         </button>
       </div>
 

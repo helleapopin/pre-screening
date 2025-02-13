@@ -229,6 +229,25 @@ function Report() {
                     <p><strong>Additional Permits Comments:</strong> {reportData.additionalPermitsComments}</p>
                 </div>
 
+                {/* Display Uploaded Images */}
+                {reportData.images && reportData.images.length > 0 && (
+                    <div className="report-section">
+                        <h3>Uploaded Images</h3>
+                        <div className="image-preview-container">
+                            {reportData.images.split(",").map((image, index) => (
+                                <img key={index} src={`https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/${image}`} alt={`Uploaded ${index}`} className="image-preview" />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+
+                <div className="report-section">
+                    <h3>Section 100000: Additional Permits</h3>
+                    <p><strong>Additional Permits Comments:</strong> {reportData.additionalPermitsComments}</p>
+                </div>
+
+
                 {/* Download PDF Button */}
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
                     <button onClick={handleDownloadPDF} className="btn btn-secondary back-button">

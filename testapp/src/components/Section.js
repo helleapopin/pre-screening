@@ -128,29 +128,6 @@ function Section({ currentStep }) {
   };
 
 
-
-
-  // // Handle form submission
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post(apiUrl, formData);
-  //     if (response.status === 200) {
-  //       console.log("Response from Server:", response.data);
-  //       alert('Data submitted successfully!');
-  //       localStorage.removeItem('sectionDraft'); // Clear draft after submission
-  //       navigate('/'); // Redirect to dashboard
-  //     } else {
-  //       alert('Failed to submit data');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error submitting data:', error);
-  //     alert('An error occurred while submitting the form');
-  //   }
-  // };
-
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();

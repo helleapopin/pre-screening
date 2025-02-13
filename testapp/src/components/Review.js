@@ -10,12 +10,40 @@ function Review() {
     });
 
     const apiUrl = 'https://fictional-orbit-695pwwpvgqj7c5qrr-8080.app.github.dev/api/submit';
-
     const handleSubmit = async () => {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        console.log("Bearer Token:", token); // ✅ Print the token to check
+
+        if (!token) {
+            console.error("❌ No token found in localStorage");
+            alert("You are not logged in!");
+            return;
+        }
+
+        // Create FormData for multipart upload
+        const formData = new FormData();
+        Object.keys(reviewData).forEach(key => {
+            if (key === "images" && Array.isArray(reviewData.images)) {
+                reviewData.images.forEach(image => formData.append("images", image));
+            } else {
+                formData.append(key, reviewData[key]);
+            }
+        });
+
+        console.log("Final FormData being sent:");
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ": ", pair[1]);
+        }
+
         try {
-            const response = await axios.post(apiUrl, reviewData, {
-                headers: { 'Content-Type': 'application/json' },
+            const response = await axios.post(apiUrl, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',  // Ensure correct content type
+                    'Authorization': `Bearer ${token}`      // Include token in request
+                },
             });
+
+            console.log("Server Response:", response.data); // ✅ Log server response
 
             if (response.status === 200 && response.data.id) {
                 alert('Report submitted and emailed successfully!');
@@ -29,6 +57,7 @@ function Review() {
             alert('An error occurred while submitting.');
         }
     };
+
 
     if (!reviewData) return <p>Loading review...</p>;
 

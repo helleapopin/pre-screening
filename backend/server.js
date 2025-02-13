@@ -6,15 +6,46 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
+const multer = require("multer");
+const path = require("path");
+const upload = multer({ dest: 'uploads/' }); // Ensure this is set up
 
 const PORT = 8080;
 const HOST = "0.0.0.0";
 const app = express();
 
 app.use(morgan("dev"));
-app.use(cors());
+app.use(cors({
+    origin: '*',  // Allow all origins (for development)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); // Uploads go to `uploads/`
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname); // Unique filename
+    }
+});
+
+// File filter to allow images only
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+    } else {
+        cb(new Error("❌ Only images are allowed!"), false);
+    }
+};
+
+
+const fs = require("fs");
+if (!fs.existsSync("uploads")) {
+    fs.mkdirSync("uploads");
+}
 
 // 🔹 Database Connection
 const connection = mysql.createConnection({
@@ -67,6 +98,7 @@ connection.query(
 connection.query(
     `CREATE TABLE IF NOT EXISTS ProjectSubmissions (
         id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        username VARCHAR(50) NOT NULL,
 
         -- Section 1 Fields
         priority VARCHAR(50) NOT NULL,
@@ -160,36 +192,6 @@ app.get("/api/submissions/:id", (req, res) => {
         res.json(results[0]);
     });
 });
-
-
-
-
-// 🔹 User Registration
-// 🔹 User Registration API
-// app.post("/api/register", async (req, res) => {
-//     const { username, email, password } = req.body;
-//     if (!username || !email || !password) {
-//         return res.status(400).json({ error: "❌ Username, email, and password are required." });
-//     }
-
-//     try {
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         connection.query(
-//             "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-//             [username, email, hashedPassword],
-//             (err, result) => {
-//                 if (err) {
-//                     console.error("❌ Database error:", err);
-//                     return res.status(500).json({ error: "❌ Database error." });
-//                 }
-//                 res.status(201).json({ message: "✅ User registered successfully!" });
-//             }
-//         );
-//     } catch (error) {
-//         console.error("❌ Error hashing password:", error);
-//         res.status(500).json({ error: "❌ Internal server error." });
-//     }
-// });
 
 
 
@@ -312,46 +314,6 @@ app.get("/api/admin/reject/:userId", (req, res) => {
 
 
 
-
-
-
-// 🔹 User Login
-// 🔹 User Login API (Supports Email OR Username)
-// app.post("/api/login", (req, res) => {
-//     const { identifier, password } = req.body; // ✅ Changed from 'email' to 'identifier'
-
-//     connection.query(
-//         "SELECT * FROM users WHERE email = ? OR username = ?", // ✅ Check for both email & username
-//         [identifier, identifier], // ✅ Pass 'identifier' for both
-//         async (err, results) => {
-//             if (err) {
-//                 console.error("❌ Database error:", err);
-//                 return res.status(500).json({ error: "❌ Database error." });
-//             }
-//             if (results.length === 0) {
-//                 return res.status(401).json({ error: "❌ User not found" });
-//             }
-
-//             const user = results[0];
-//             const isPasswordValid = await bcrypt.compare(password, user.password);
-
-//             if (!isPasswordValid) {
-//                 return res.status(401).json({ error: "❌ Invalid credentials" });
-//             }
-
-//             // Generate JWT
-//             const token = jwt.sign(
-//                 { userId: user.id, email: user.email, username: user.username }, // ✅ Include username
-//                 process.env.JWT_SECRET,
-//                 { expiresIn: "1h" }
-//             );
-
-//             res.json({ token, message: "✅ Login successful!" });
-//         }
-//     );
-// });
-
-
 app.post("/api/login", (req, res) => {
     const { identifier, password } = req.body; // ✅ Identifier (can be email or username)
 
@@ -397,42 +359,26 @@ app.post("/api/login", (req, res) => {
 
 
 
-
-
-// 🔹 Middleware to Protect Routes
 const authenticateToken = (req, res, next) => {
     const authHeader = req.header("Authorization");
-    if (!authHeader) return res.status(401).json({ error: "❌ Access denied" });
+    if (!authHeader) return res.status(401).json({ error: "Access denied" });
 
-    const token = authHeader.split(" ")[1]; // Extract token from "Bearer <token>"
-    if (!token) return res.status(401).json({ error: "❌ Access denied" });
+    const token = authHeader.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Access denied" });
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: "❌ Invalid token" });
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: "Invalid token" });
         req.user = user;
         next();
     });
 };
 
-// 🔹 Submit Section1 Data (Final Submission)
-// app.post("/api/section1/submit", (req, res) => {
-//     const { priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids } = req.body;
 
-//     if (!roadName || !priority || !dueDate) {
-//         return res.status(400).json({ error: "❌ Road Name, Priority, and Due Date are required." });
-//     }
 
-//     connection.query(
-//         "INSERT INTO Section1 (priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids, isDraft) VALUES (?, ?, ?, ?, ?, ?, ?, ?, FALSE)",
-//         [priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids],
-//         (err, result) => {
-//             if (err) return res.status(500).json({ error: "❌ Database error." });
-//             res.status(200).json({ message: "✅ Data submitted successfully!" });
-//         }
-//     );
-// });
+app.post("/api/submit", authenticateToken, upload.array("images", 10), (req, res) => {
+    const uploadedImages = req.files ? req.files.map(file => file.path).join(",") : "";
+    const username = req.user?.username;  // ✅ Extract username from authenticated user
 
-app.post("/api/submit", (req, res) => {
     const {
         // Section 1 Fields
         priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
@@ -466,13 +412,14 @@ app.post("/api/submit", (req, res) => {
         additionalPermitsComments
     } = req.body;
 
+
     if (!roadName || !priority || !dueDate) {
         return res.status(400).json({ error: "❌ Road Name, Priority, and Due Date are required." });
     }
 
     connection.query(
         `INSERT INTO ProjectSubmissions 
-        (priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
+        (username, priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
          proximityToWaterbody, largeBodyFishName, smallBodyFishName, fishPassageDesignRequired, 
          fishSpawningWindows, commentsBodiesOfWater, additionalComments,
          dfoReviewRequired, dfoComments,
@@ -483,6 +430,7 @@ app.post("/api/submit", (req, res) => {
          inProvincialForest, forestProductPermitRequired, merchantableTimberPermitRequired, forestPermitComments,
          impactedSitesComments,
          additionalPermitsComments,
+         images,
          isDraft) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?, ?, ?,
@@ -492,10 +440,10 @@ app.post("/api/submit", (req, res) => {
                 ?,
                 ?, ?, ?, ?,
                 ?,
-                ?, FALSE)`, // FALSE means final submission
+                ?,?,?, FALSE)`, // FALSE means final submission
         [
             // Section 1
-            priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
+            username, priority, dueDate, roadName, atKm, latitude, longitude, nearestTown, pids,
 
             // Section 2
             proximityToWaterbody, largeBodyFishName, smallBodyFishName, fishPassageDesignRequired,
@@ -523,17 +471,53 @@ app.post("/api/submit", (req, res) => {
             impactedSitesComments,
 
             // Section 10
-            additionalPermitsComments
+            additionalPermitsComments,
+            uploadedImages
         ],
         (err, result) => {
             if (err) {
                 console.error("❌ Database error:", err);
                 return res.status(500).json({ error: "❌ Database error." });
             }
-            res.status(200).json({ message: "✅ Data submitted successfully!" });
+            res.status(200).json({ message: "✅ Data submitted successfully!", id: result.insertId });
         }
     );
 });
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+app.get("/api/my-submissions", authenticateToken, (req, res) => {
+    const username = req.user?.username; // ✅ Get username from JWT
+
+    if (!username) {
+        console.error("❌ Unauthorized request: No username in token");
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    console.log(`🔍 Fetching submissions for username: ${username}`);
+
+    connection.query(
+        "SELECT * FROM ProjectSubmissions WHERE username = ? ORDER BY createdAt DESC",
+        [username], // ✅ Get submissions by username
+        (err, results) => {
+            if (err) {
+                console.error("❌ Database error:", err);
+                return res.status(500).json({ error: "❌ Database error." });
+            }
+            if (results.length === 0) {
+                console.warn(`⚠️ No submissions found for username: ${username}`);
+                return res.status(404).json({ error: "No submissions found." });
+            }
+
+            console.log(`✅ Found ${results.length} submissions for ${username}`);
+            res.json(results);
+        }
+    );
+});
+
+
 
 
 

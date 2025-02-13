@@ -57,6 +57,7 @@
   max-width: 95%;
   margin: 40px auto 0;
   overflow: hidden;
+  font-family: system-ui, sans-serif;
 }
 
 /* Back Button */
@@ -748,7 +749,7 @@ body {
 /* Step number styling */
 .stepNumber {
   font-size: 13px;
-  font: "Fira Sans", sans-serif;
+  font-family: system-ui, sans-serif;
   font-style: italic;
   color: white;
 }
@@ -757,7 +758,7 @@ body {
 .stepTitle {
   font-size: 16px;
   font-weight: bold;
-  font: "Fira Sans", sans-serif;
+  font-family: system-ui, sans-serif;
   color: white;
 }
 

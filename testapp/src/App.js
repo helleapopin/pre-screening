@@ -15,6 +15,7 @@ import Section7 from "./components/Section7";
 import Section8 from "./components/Section8";
 import Section9 from "./components/Section9";
 import Section10 from "./components/Section10";
+import MySubmissions from "./components/MySubmissions";
 import Review from "./components/Review";
 import Report from "./components/Report";
 import Login from "./components/Login"; // Import Login component
@@ -109,6 +110,8 @@ const App = () => {
           />
           <Route path="/review" element={<ProtectedRoute element={<Review />} />} />
           <Route path="/report/:id" element={<ProtectedRoute element={<Report />} />} />
+          <Route path="/my-submissions" element={<MySubmissions />} />
+
 
           {/* section path */}
           <Route path="/create-report" element={<Layout currentStep={1} component={<Section currentStep={1} />} />} />
