@@ -498,7 +498,9 @@ body {
   background: rgba(255, 255, 255, 0.05);
   /* Light transparency */
   border-radius: 15px;
+  border-collapse: collapse;
   overflow: hidden;
+  position: relative;
 }
 
 
@@ -506,6 +508,8 @@ body {
   background: rgba(255, 255, 255, 0.1);
   /* Slight frost */
   font-weight: bold;
+  border-radius: 15px 15px 0 0;
+  /* border-radius: 15px 15px 0 0;     this fixed the grey border issue */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
@@ -922,4 +926,11 @@ body {
   object-fit: cover;
   border-radius: 10px;
   border: 2px solid #ccc;
+}
+
+.completedSection {
+  background-color: #4caf50 !important;
+  /* Green background */
+  color: white !important;
+  font-weight: bold;
 }

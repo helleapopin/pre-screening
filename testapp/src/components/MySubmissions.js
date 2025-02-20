@@ -17,7 +17,7 @@ function MySubmissions() {
             })
             .catch(error => {
                 console.error("Error fetching submissions:", error);
-                setError("❌ Failed to load submissions. Please try again.");
+                setError("Failed to load submissions. Please try again.");
             });
     }, []);
 
